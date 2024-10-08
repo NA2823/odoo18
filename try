@@ -7,7 +7,7 @@ class ProductDetail(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Product Detail'
 
-    name = fields.Char(string="Product ID",)
+    product_id = fields.Char(string="Product ID", default="New")
     product_name = fields.Char(string="Product Name", required=True, tracking=True)
     product_image = fields.Image(string="Product Image", required=True, tracking=True)
     category_id = fields.Many2one('products.category', string="Category", required=True, )

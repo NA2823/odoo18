@@ -2,3 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_product_detail,access.product.detail,model_product_detail,base.group_user,1,1,1,1
 access_products_category,access.products.category,model_products_category,base.group_user,1,1,1,1
 access_product_subcategory,access.product.subcategory,model_product_subcategory,base.group_user,1,1,1,1
+access_customer_corner,access.customer.corner,model_customer_corner,base.group_user,1,1,1,1
+access_product_booking,access.product.booking,model_product_booking,base.group_user,1,1,1,1
+access_product_booking_line,access.product.booking.line,model_product_booking_line,base.group_user,1,1,1,1
+access_discount_tag,access.discount.tag,model_discount_tag,base.group_user,1,1,1,1
