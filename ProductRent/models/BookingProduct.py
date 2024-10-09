@@ -9,6 +9,7 @@ class ProductBooking(models.Model):
     _name = "product.booking"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Product Booking"
+    _rec_name = "bill_number"
 
     bill_number = fields.Char(string="Bill Number", default="New", readonly=True)
     billing_date = fields.Date(string="Billing Date", required=True, tracking=True, default=fields.Date.context_today)
@@ -58,13 +59,12 @@ class ProductBookingLine(models.Model):
     discount_id = fields.Many2many  ('discount.tag', string="Discount")
     total_price = fields.Monetary(string="Total Price", compute="_compute_total", )
 
-    @api.depends('qty', 'price', 'discount_id')
+    @api.depends('qty', 'price', 'discount_id.percentage')
     def _compute_total(self):
         for rec in self:
             total = rec.qty * rec.price
-            discount_percentage = rec.discount_id.percentage if rec.discount_id else 0
+            discount_percentage = sum(tag.percentage for tag in rec.discount_id)
             total -= (total * discount_percentage / 100)
-
             rec.total_price = total
 
 

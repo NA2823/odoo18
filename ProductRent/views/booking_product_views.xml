@@ -98,10 +98,10 @@
                     <field name="billing_date"/>
                     <field name="customer_id"/>
                     <field name="phone"/>
-                    <field name="email"/>
+                    <field name="booking_date"/>
+                    <field name="return_date"/>
+                    <field name="email" optional="hide"/>
                     <field name="address" optional="hide"/>
-                    <field name="booking_date" optional="hide"/>
-                    <field name="return_date" optional="hide"/>
                 </list>
             </field>
         </record>
