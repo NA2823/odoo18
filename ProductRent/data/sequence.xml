@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_product_booking" model="ir.sequence">
+            <field name="name">Product Bill</field>
+            <field name="code">product.booking</field>
+            <field name="prefix">IN</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+
+
+</odoo>

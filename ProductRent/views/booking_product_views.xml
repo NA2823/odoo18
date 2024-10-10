@@ -9,7 +9,7 @@
         <record id="action_product_booking" model="ir.actions.act_window">
             <field name="name">Add Booking</field>
             <field name="res_model">product.booking</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">list,form,calendar</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Add a new Booking
@@ -24,6 +24,21 @@
             <field name="model">product.booking</field>
             <field name="arch" type="xml">
                 <form string="BookingDetail">
+                    <header>
+                        <button name="action_booked" type="object" string="Booked"
+                                invisible="bill_status != 'draft'" class="oe_highlight"/>
+                        <button name="action_delivered" type="object" string="Delivered"
+                                invisible="bill_status != 'booked'" class="oe_highlight"/>
+                        <button name="action_return" type="object" string="Return"
+                                invisible="bill_status != 'delivered'" class="oe_highlight"/>
+                        <button name="action_complete" type="object" string="Complete"
+                                invisible="bill_status != 'return'" class="oe_highlight"/>
+                        <button name="action_cancelled" type="object" string="Cancelled"
+                                invisible="bill_status == 'cancelled' or bill_status == 'delivered' or bill_status == 'return' or bill_status == 'complete'"
+                                confirm="Are you sure cancel appointment ?"/>
+                        <field name="bill_status" widget="statusbar"
+                               statusbar_visible="draft, booked, delivered, return, complete"/>
+                    </header>
                     <sheet>
                         <group name="title_group" col="6" class="mt-5 mt-md-0">
                             <group colspan="4">
@@ -94,18 +109,48 @@
             <field name="model">product.booking</field>
             <field name="arch" type="xml">
                 <list string="BookingRent">
-                    <field name="bill_number"/>
                     <field name="billing_date"/>
+                    <field name="bill_number" class="fw-bold"/>
                     <field name="customer_id"/>
                     <field name="phone"/>
                     <field name="booking_date"/>
                     <field name="return_date"/>
+                    <field name="bill_status" widget="badge" decoration-danger="bill_status == 'cancelled'"
+                           decoration-success="bill_status == 'complete'" decoration-info="bill_status == 'booked'"
+                           decoration-warning="bill_status == 'delivered'" class="oe_center"/>
                     <field name="email" optional="hide"/>
                     <field name="address" optional="hide"/>
                 </list>
             </field>
         </record>
 
+        <!-- Product detail calendar view -->
+        <record id="product_booking_view_calendar" model="ir.ui.view">
+            <field name="name">product.booking.calendar</field>
+            <field name="model">product.booking</field>
+            <field name="arch" type="xml">
+                <calendar string="Product Booking Schedule" create="true"
+                          mode="month" date_start="booking_date" date_stop="return_date" color="customer_id">
+                    <field name="customer_id"/>
+                    <field name="bill_number"/>
+                    <field name="booking_product_line_id" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field name="note"/>
+                    <field name="bill_status" widget="badge" decoration-danger="bill_status == 'cancelled'"
+                           decoration-success="bill_status == 'complete'" decoration-info="bill_status == 'booked'"
+                           decoration-warning="bill_status == 'delivered'"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="product_booking_view_search" model="ir.ui.view">
+            <field name="name">product.booking.search</field>
+            <field name="model">product.booking</field>
+            <field name="arch" type="xml">
+                <search string="Product Booking Search">
+                    <field name="booking_product_line_id" string="Product ID"/>
+                </search>
+            </field>
+        </record>
 
         <!-- menu -->
         <menuitem id="menu_booking"

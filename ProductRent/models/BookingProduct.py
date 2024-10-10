@@ -23,7 +23,39 @@ class ProductBooking(models.Model):
     booking_product_line_id = fields.One2many('product.booking.line', 'product_booking_id', string="Products")
     payable_amount = fields.Monetary(string="Payable Amount", compute="_compute_payable_amount", store=True, )
     note = fields.Text(string="Note")
+    bill_status = fields.Selection(
+        [('draft', 'Draft'), ('booked', 'Booked'), ('cancelled', 'Cancelled'), ('delivered', 'Delivered'),
+         ('return', 'Return'), ('complete', 'Complete') ], string="Status", default="draft")
 
+    def action_booked(self):
+        for rec in self:
+            rec.bill_status = 'booked'
+
+    def action_delivered(self):
+        for rec in self:
+            rec.bill_status = 'delivered'
+
+    def action_return(self):
+        for rec in self:
+            rec.bill_status = 'return'
+
+    def action_complete(self):
+        for rec in self:
+            rec.bill_status = 'complete'
+
+    def action_cancelled(self):
+        for rec in self:
+            record = self.env['product.booking'].search([('id', '=', rec.id)])
+            print(record)
+
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('bill_number') or vals["bill_number"] == "New":
+            vals["bill_number"] = self.env["ir.sequence"].next_by_code('product.booking')
+
+        record = super(ProductBooking, self).create(vals)
+        return record
 
     @api.constrains('booking_date')
     def _check_unique_and_valid_fields(self):
@@ -48,6 +80,7 @@ class ProductBooking(models.Model):
 class ProductBookingLine(models.Model):
     _name = "product.booking.line"
     _description = "Product Booking Line"
+    _rec_name = "product_ids"
 
     product_ids = fields.Many2one('product.detail', string="Product", required=True)
     product_image = fields.Image(string="Product Image", related="product_ids.product_image")
@@ -56,7 +89,7 @@ class ProductBookingLine(models.Model):
     price = fields.Monetary(string="Rent Price", related="product_ids.product_rent_price")
     product_booking_id = fields.Many2one('product.booking', string="Customer")
     currency_id = fields.Many2one('res.currency', string='Currency', default=20)
-    discount_id = fields.Many2many  ('discount.tag', string="Discount")
+    discount_id = fields.Many2many('discount.tag', string="Discount")
     total_price = fields.Monetary(string="Total Price", compute="_compute_total", )
 
     @api.depends('qty', 'price', 'discount_id.percentage')

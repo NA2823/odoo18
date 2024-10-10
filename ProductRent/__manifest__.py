@@ -10,6 +10,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/sequence.xml',
         'views/product_views.xml',
         'views/product_readonly_views.xml',
         'views/customer_corner_views.xml',

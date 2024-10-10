@@ -18,7 +18,7 @@ class ProductDetail(models.Model):
     product_rent_price = fields.Monetary(string="Rent Price", required=True, tracking=True)
     total_qty = fields.Integer(string="Total Quantity", default=1)
     product_detail = fields.Html(string="Product Detail")
-    is_available = fields.Boolean(string="Is Available", default=True, compute="_compute_is_available"  )
+    is_available = fields.Boolean(string="Is Available", default=True, compute="_compute_is_available",)
     product_bill = fields.Many2many('product.booking', string="product Bill", compute="_compute_product_bill")
 
     @api.depends('product_bill')
@@ -27,7 +27,7 @@ class ProductDetail(models.Model):
             rec.product_bill = self.env['product.booking'].search(
                 [('booking_product_line_id.product_ids', '=', rec.id)])
 
-    @api.depends('product_bill')
+    @api.depends('is_available')
     def _compute_is_available(self):
         for rec in self:
             today = date.today()

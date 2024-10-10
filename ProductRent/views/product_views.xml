@@ -80,7 +80,7 @@
                 <field name="subcategory_id"/>
                 <field name="currency_id" optional="hide"/>
                 <field name="total_qty"/>
-                <field name="is_available"/>
+                <field name="is_available" optional="hide"/>
                 <field name="product_rent_price"/>
                 <field name="product_detail" optional="hide"/>
             </list>
@@ -158,7 +158,6 @@
             </kanban>
         </field>
     </record>
-
 
     <!-- menu -->
     <menuitem id="menu_productrent_root"
