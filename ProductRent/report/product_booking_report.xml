@@ -1,0 +1,197 @@
+<odoo>
+    <data>
+
+        <record id="product_booking_report_temp" model="ir.actions.report">
+            <field name="name">Product Report</field>
+            <field name="model">product.booking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ProductRent.product_booking_report_template</field>
+            <field name="report_file">ProductRent.product_booking_report_template</field>
+            <field name="print_report_name">"Elvyana Invoice - " + object.bill_number</field>
+            <field name="binding_model_id" ref="ProductRent.model_product_booking"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="product_booking_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <style>
+                                .highlight {
+                                    color: #B39D56; /* Change this color as needed */
+                                    font-weight: bold;
+                                }
+                            </style>
+                            <h2 style="text-align: center;">Invoice</h2>
+                            <div style="margin-top: 50px;">
+                                <div style="float: left; width: 48%; margin-right: 2%;">
+                                    <h3>
+                                        <strong>Invoice No :</strong>
+                                        <span class="highlight">
+                                            <t t-esc="doc.bill_number"/>
+                                        </span>
+                                    </h3>
+                                </div>
+
+                                <div style="float: right; width: 48%; margin-left: 2%; text-align: end;">
+                                    <h5>
+                                        <strong>Date:</strong>
+                                        <span class="highlight">
+                                            <t t-esc="doc.billing_date"/>
+                                        </span>
+                                    </h5>
+                                </div>
+
+                                <div style="clear: both;"></div> <!-- Clear floats -->
+                            </div>
+
+                            <h6 style="margin-top: 20px;">Customer Detail</h6>
+                            <table class="table table-sm" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border: 1px solid black;">
+                                        <th style="padding: 10px; border: 1px solid black;" colspan="2">
+                                            <strong>
+                                                Customer Name :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.customer_id.name"/>
+                                                </span>
+                                            </strong>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border: 1px solid black;">
+                                        <td style="padding: 10px; border: 1px solid black;">
+                                            <strong>Phone :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.customer_id.phone"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;">
+                                            <strong>Email :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.customer_id.email"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td style="padding: 10px; border: 1px solid black;" colspan="1">
+                                            <strong>Booking Date :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.booking_date"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;" colspan="2">
+                                            <strong>Return Date :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.return_date"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td style="padding: 10px; border: 1px solid black;" colspan="2">
+                                            <strong>Address :
+                                                <span class="highlight">
+                                                    <t t-esc="doc.customer_id.address"/>
+                                                </span>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h6 style="margin-top: 20px;">Product Detail</h6>
+                            <table class="table table-sm" style="width: 100%; border-collapse: collapse; text-align:center; vertical-align: middle;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid black;"><b>Product ID</b></th>
+                                        <th style="border: 1px solid black;">Product Image</th>
+                                        <th style="border: 1px solid black;">Product Name</th>
+                                        <th style="border: 1px solid black;">Price</th>
+                                        <th style="border: 1px solid black;">Quantity</th>
+                                        <th style="border: 1px solid black;">Discount</th>
+                                        <th style="border: 1px solid black;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.booking_product_line_id" t-as="line">
+                                        <tr style="border: 1px solid black;">
+                                            <td style="border: 1px solid black;">
+                                                <t t-esc="line.product_ids.name"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <img t-if="line.product_image"
+                                                     t-att-src="image_data_uri(line.product_image)"
+                                                     style="width: auto; max-height: 50px;"
+                                                     alt="Product Image"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <t t-esc="line.product_name"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                ₹<t t-esc="line.price" widget="monetary"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <t t-esc="line.qty"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                <t t-esc="line.discount_id.name"/>
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                ₹<t t-esc="line.total_price" widget="monetary"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <div style="margin-top: 20px;">
+                                <div style="float: left; width: 48%; margin-right: 2%;">
+                                    <p>
+                                        <strong>
+                                            Payment Amount In :
+                                            <span class="highlight">
+                                                <t t-esc="doc.payment_in"/>
+                                            </span>
+                                        </strong>
+                                    </p>
+                                </div>
+
+                                <div style="float: right; width: 48%; margin-left: 2%; text-align: end;">
+                                    <h5>
+                                        <strong>
+                                            Payable Amount : ₹
+                                            <span class="highlight">
+                                                <t t-esc="doc.payable_amount"/>
+                                            </span>
+                                        </strong>
+                                    </h5>
+                                </div>
+
+                                <div style="clear: both;"></div> <!-- Clear floats -->
+                            </div>
+
+                            <hr style="border-top: 1px dashed #000;"/>
+
+                            <div style="margin-top: 20px;">
+                                <h4>Terms and Conditions</h4>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li>All payments are non-refundable.</li>
+                                    <li>Payment must be completed before the due date.</li>
+                                    <li>Any late payments may incur a fee.</li>
+                                    <li>Contact us for any discrepancies within 7 days of payment.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

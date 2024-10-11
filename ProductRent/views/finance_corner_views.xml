@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- ==================== -->
+        <!-- finance Detail -->
+        <!-- ==================== -->
+
+        <!-- action -->
+        <record id="action_finance_corner" model="ir.actions.act_window">
+            <field name="name">Add finance</field>
+            <field name="res_model">finance.corner</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new <finance></finance>
+                </p>
+            </field>
+        </record>
+
+        <!-- product detail form view -->
+        <record id="finance_corner_view_form" model="ir.ui.view">
+            <field name="name">finance.corner.form</field>
+            <field name="model">finance.corner</field>
+            <field name="arch" type="xml">
+                <form string="financeDetail">
+                    <sheet>
+                        <group string="finance Detail"/>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="date_of_create"/>
+                                <field name="finance_type"/>
+                            </group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="amount_in"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- product detail list view -->
+        <record id="finance_corner_view_list" model="ir.ui.view">
+            <field name="name">finance.corner.list</field>
+            <field name="model">finance.corner</field>
+            <field name="arch" type="xml">
+                <list string="financeRent">
+                    <field name="name"/>
+                    <field name="date_of_create"/>
+                    <field name="finance_type"/>
+                    <field name="amount"/>
+                    <field name="amount_in"/>
+                    <field name="description"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- menu -->
+        <menuitem id="menu_finance"
+                  name="finance"
+                  parent="menu_productrent_root"/>
+
+        <menuitem id="menu_finance_corner"
+                  name="Add finance"
+                  parent="menu_finance"
+                  action="action_finance_corner"/>
+
+    </data>
+
+</odoo>

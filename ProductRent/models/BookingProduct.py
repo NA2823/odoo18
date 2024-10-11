@@ -22,10 +22,11 @@ class ProductBooking(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency', default=20)
     booking_product_line_id = fields.One2many('product.booking.line', 'product_booking_id', string="Products")
     payable_amount = fields.Monetary(string="Payable Amount", compute="_compute_payable_amount", store=True, )
-    note = fields.Text(string="Note")
+    payment_in = fields.Selection([('cash', 'Cash'), ('upi', 'UPI')], string="Payment In")
+    note = fields.Html(string="Note", default="Deposite Amount : ₹ 2000")
     bill_status = fields.Selection(
         [('draft', 'Draft'), ('booked', 'Booked'), ('cancelled', 'Cancelled'), ('delivered', 'Delivered'),
-         ('return', 'Return'), ('complete', 'Complete') ], string="Status", default="draft")
+         ('return', 'Return'), ('complete', 'Complete')], string="Status", default="draft")
 
     def action_booked(self):
         for rec in self:
@@ -48,6 +49,15 @@ class ProductBooking(models.Model):
             record = self.env['product.booking'].search([('id', '=', rec.id)])
             print(record)
 
+    def action_print_invoice(self):
+        template_id = 18     # Replace with your template XML ID
+        for record in self:
+            if template_id:
+                template = self.env['mail.template'].browse(template_id)
+                template.send_mail(record.id, force_send=True)
+        return True
+
+    # return self.env.ref('ProductRent.product_booking_report_temp').report_action(self)
 
     @api.model
     def create(self, vals):

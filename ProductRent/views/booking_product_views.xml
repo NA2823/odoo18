@@ -36,6 +36,7 @@
                         <button name="action_cancelled" type="object" string="Cancelled"
                                 invisible="bill_status == 'cancelled' or bill_status == 'delivered' or bill_status == 'return' or bill_status == 'complete'"
                                 confirm="Are you sure cancel appointment ?"/>
+                        <button name="action_print_invoice" type="object" string="Send Invoice"/>
                         <field name="bill_status" widget="statusbar"
                                statusbar_visible="draft, booked, delivered, return, complete"/>
                     </header>
@@ -89,6 +90,7 @@
                                     <group colspan="4">
                                         <field colspan="2" name="note" nolabel="1"
                                                placeholder="Terms and conditions..."/>
+                                        <field name="payment_in"/>
                                     </group>
                                     <group class="oe_subtotal_footer" colspan="2">
                                         <field class="fw-bold" name="payable_amount" colspan="2" readonly="1"
@@ -98,6 +100,7 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="o_attachment_preview"/>
                     <chatter/>
                 </form>
             </field>
@@ -120,6 +123,7 @@
                            decoration-warning="bill_status == 'delivered'" class="oe_center"/>
                     <field name="email" optional="hide"/>
                     <field name="address" optional="hide"/>
+                    <field name="payment_in" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -151,6 +155,8 @@
                 </search>
             </field>
         </record>
+
+        odoo
 
         <!-- menu -->
         <menuitem id="menu_booking"

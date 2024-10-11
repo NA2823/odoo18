@@ -1,78 +1,90 @@
-from odoo import api, models, fields, _
-from odoo.exceptions import ValidationError, UserError
-from datetime import date, datetime, timedelta
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
 
+        <record id="product_booking_report_temp" model="ir.actions.report">
+            <field name="name">Product Report</field>
+            <field name="model">product.booking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ProductRent.product_booking_report_template</field>
+            <field name="report_file">ProductRent.product_booking_report_template</field>
+            <field name="print_report_name">'Product Report'</field>
+            <field name="binding_model_id" ref="ProductRent.model_product_booking"/>
+            <field name="binding_type">report</field>
+        </record>
 
-class ProductDetail(models.Model):
-    _name = 'product.detail'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-    _description = 'Product Detail'
+        <template id="product_booking_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
 
-    name = fields.Char(string="Product ID", )
-    product_name = fields.Char(string="Product Name", required=True, tracking=True)
-    product_image = fields.Image(string="Product Image", required=True, tracking=True)
-    category_id = fields.Many2one('products.category', string="Category", required=True, )
-    subcategory_id = fields.Many2one('product.subcategory', string="Subcategory", required=True,
-                                     domain="[('category_id', '=', category_id)]")
-    currency_id = fields.Many2one('res.currency', string='Currency', default=20)
-    product_rent_price = fields.Monetary(string="Rent Price", required=True, tracking=True)
-    total_qty = fields.Integer(string="Total Quantity", default=1)
-    product_detail = fields.Html(string="Product Detail")
-    is_available = fields.Boolean(string="Is Available", default=True,)
-    booked_customer = fields.One2many('product.booking', 'booking_product_line_id', string="Booked Customer",
-                                      compute="_compute_booked_customer")
-    #
-    # @api.depends('booked_customer')
-    # def _compute_is_available(self):
-    #     for rec in self:
-    #         today = date.today()
-    #         is_booked = False
-    #         for booking in rec.booked_customer:
-    #             if booking.booking_date <= today <= booking.return_date:
-    #                 is_booked = True
-    #                 break
-    #         rec.is_available = not is_booked
-    #
-    @api.depends('booked_customer')
-    def _compute_booked_customer(self):
-        for rec in self:
-            rec.booked_customer = self.env['product.booking'].search([
-                ('booking_product_line_id', '=', rec.id),
-            ])
+                            <h2>Invoice</h2>
+                            <p>Invoice Number:
+                                <t t-esc="doc.bill_number"/>
+                            </p>
+                            <p>Billing Date:
+                                <t t-esc="doc.billing_date"/>
+                            </p>
+                            <p>Customer:
+                                <t t-esc="doc.customer_id.name"/>
+                            </p>
 
-    @api.constrains('name')
-    def _check_unique_name(self):
-        for record in self:
-            if self.search_count([('name', '=', record.name)]) > 1:
-                raise ValidationError(_("The Product ID must be unique."))
+                            <table class="table table-sm"
+                                   style="border: 0px solid black;">
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Image</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Discount</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.booking_product_line_id" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="line.product_ids.name"/>
+                                            </td>
+                                            <td>
+                                                <img t-if="line.product_image"
+                                                     t-att-src="image_data_uri(line.product_image)"
+                                                     style="width: auto; max-height: 50px; "
+                                                     alt="product Image"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.product_name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.price" widget="monetary"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.qty"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.discount_id.name" widget="badge"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.total_price" widget="monetary"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
 
-            if len(self.product_name) > 40:
-                raise ValidationError(
-                    _(f"The Product Name max character 40 allow you enter {len(self.product_name)} character."))
+                            <div>
+                                <p>Total Payable:
+                                    <t t-esc="doc.payable_amount" widget="monetary"/>
+                                </p>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
 
-
-class ProductsCategory(models.Model):
-    _name = "products.category"
-    _description = "Products Category"
-
-    name = fields.Char(string="Category Name", required=True)
-
-    @api.constrains('name')
-    def _check_unique_name(self):
-        for record in self:
-            if self.search_count([('name', '=', record.name)]) > 1:
-                raise ValidationError(_("The Category Name must be unique."))
-
-
-class ProductSubcategory(models.Model):
-    _name = "product.subcategory"
-    _description = "Product Subcategory"
-
-    category_id = fields.Many2one('products.category', string='Category', required=True)
-    name = fields.Char(string="Subcategory Name", required=True)
-
-    @api.constrains('name')
-    def _check_unique_name(self):
-        for record in self:
-            if self.search_count([('name', '=', record.name)]) > 1:
-                raise ValidationError(_("The Subcategory Name must be unique."))
+    </data>
+</odoo>
