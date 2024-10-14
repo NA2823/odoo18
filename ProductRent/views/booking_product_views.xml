@@ -36,7 +36,10 @@
                         <button name="action_cancelled" type="object" string="Cancelled"
                                 invisible="bill_status == 'cancelled' or bill_status == 'delivered' or bill_status == 'return' or bill_status == 'complete'"
                                 confirm="Are you sure cancel appointment ?"/>
-                        <button name="action_print_invoice" type="object" string="Send Invoice"/>
+                        <button name="action_print_invoice" type="object" string="Send Invoice"
+                                invisible="bill_status == 'cancelled' or bill_status == 'draft' or bill_status == 'booked'"/>
+<!--                        <button name="send_invoice_via_whatsapp" type="object" string="Send Invoice vie Whatsapp"-->
+<!--                                invisible="bill_status == 'cancelled' or bill_status == 'draft' or bill_status == 'booked'"/>-->
                         <field name="bill_status" widget="statusbar"
                                statusbar_visible="draft, booked, delivered, return, complete"/>
                     </header>

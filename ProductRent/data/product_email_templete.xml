@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mail_template_product_invoice" model="mail.template">
+            <field name="name">Invoice: Product Invoice</field>
+            <field name="model_id" ref="ProductRent.model_product_booking"/>
+            <field name="subject">{{ object.bill_number }} Invoice</field>
+            <field name="email_from">{{ user.email }}</field>
+            <field name="email_to">{{ object.customer_id.email }}</field>
+            <field name="description">Sent manually to customer when clicking on 'Send invoice by email' in payment
+                action
+            </field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear
+                        <span style="font-weight: bold;">
+                            <t t-out="object.customer_id.name or ''"/>
+                        </span>
+                        <br/>
+                        <br/>
+                        Thank you for shopping.
+
+                        <br/>
+                        <br/>
+                        Do not hesitate to contact us if you have any questions.
+                        Invoice Date :
+                        <span style="font-weight: bold;">
+                            <t t-out="object.billing_date or ''"/>
+                        </span>
+                        <br/>
+                        Invoice No :
+                        <span style="font-weight: bold;">
+                            <t t-out="object.bill_number or ''"/>
+                        </span>
+                        <br/>
+                        <br/>
+                        <p>Best regards,
+                            <br/>
+                            Elyana Boutique Store
+                        </p>
+
+                    </p>
+                </div>
+            </field>
+            <field name="report_template_ids" eval="[(4, ref('ProductRent.product_booking_report_temp'))]"/>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

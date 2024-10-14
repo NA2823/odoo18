@@ -1,6 +1,10 @@
 from odoo import api, models, fields, _
 from odoo.exceptions import ValidationError
 from datetime import date, datetime, timedelta
+import urllib.parse
+import requests
+import tempfile
+import os
 
 
 # Product Booking
@@ -50,14 +54,13 @@ class ProductBooking(models.Model):
             print(record)
 
     def action_print_invoice(self):
-        template_id = 18     # Replace with your template XML ID
+        template_id = self.env.ref('ProductRent.mail_template_product_invoice').id     # Replace with your template XML ID
+        print(template_id)
         for record in self:
             if template_id:
                 template = self.env['mail.template'].browse(template_id)
                 template.send_mail(record.id, force_send=True)
         return True
-
-    # return self.env.ref('ProductRent.product_booking_report_temp').report_action(self)
 
     @api.model
     def create(self, vals):

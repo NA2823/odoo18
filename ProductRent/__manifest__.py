@@ -11,11 +11,15 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequence.xml',
+        'data/product_email_templete.xml',
         'views/product_views.xml',
         'views/product_readonly_views.xml',
         'views/customer_corner_views.xml',
         'views/booking_product_views.xml',
         'views/finance_corner_views.xml',
+        'views/discount_tag_views.xml',
         'report/product_booking_report.xml',
     ],
 }
+
+# google passkey = xknl zaqr rxcd okns
